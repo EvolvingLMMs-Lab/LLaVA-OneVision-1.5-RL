@@ -1,0 +1,36 @@
+name: Check Formatting
+
+on: [pull_request]
+
+jobs:
+  check_formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install isort==6.0.1 black==25.1.0 clang-format==19.1.7 autoflake==2.3.1
+
+      - name: Check autoflake formatting
+        run: |
+          autoflake --check areal/
+          autoflake --check examples/
+
+      - name: Check Python formatting with isort
+        run: isort --check-only .
+
+      - name: Check Python formatting with black
+        run: black --check .
+
+      - name: Check C++ formatting
+        run: |
+          find . -type f \( -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.cu' -o -name '*.cuh' \) -exec clang-format --dry-run --Werror {} +
