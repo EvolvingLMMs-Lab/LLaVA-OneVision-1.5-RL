@@ -189,6 +189,7 @@ wandb/
 outputs/
 sympy/
 !/docs/figures/*
+!/docs/*
 
 pretrained
 experiments
