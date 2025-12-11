@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="LLaVA-OneVision-1.5-RL: Eliciting Long-Context Reasoning in Multimodal Models via Rule-Based RL.">
+  <meta name="keywords" content="LLaVA, Multi-modal, Reinforcement Learning, Reasoning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLaVA-OneVision-1.5-RL</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  
+  <!-- Bulma CSS Framework -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #ffffff;
+      color: #2c3e50;
+    }
+
+    /* Navbar Style matching LLaVA blog */
+    .navbar {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .navbar-brand span {
+        font-weight: bold;
+        font-family: 'Google Sans', sans-serif;
+        color: #333;
+        font-size: 1.2rem;
+        padding-left: 1rem;
+    }
+
+    /* Hero & Title */
+    .hero-body {
+        padding-bottom: 2rem;
+    }
+    .title.is-1 {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 700;
+      font-size: 2.8rem;
+      color: #1a1a1a;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    .subtitle.is-3 {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 400;
+      font-size: 1.4rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    /* Authors */
+    .publication-authors {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+    .publication-authors a {
+      color: #209cee; /* LLaVA Blue */
+      font-weight: 500;
+    }
+    .publication-authors a:hover {
+      text-decoration: underline;
+    }
+    .author-block {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    /* Buttons */
+    .publication-links {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .button.is-rounded {
+      border-radius: 30px;
+      padding-left: 20px;
+      padding-right: 20px;
+      font-weight: 600;
+      border: 1px solid #dbdbdb;
+      transition: all 0.2s ease;
+    }
+    .button.is-dark {
+        background-color: #363636;
+        border-color: transparent;
+        color: #fff;
+    }
+    .button.is-dark:hover {
+        background-color: #4a4a4a;
+    }
+    .button .icon {
+        margin-right: 0.3rem;
+    }
+
+    /* Content Layout */
+    .container.is-max-desktop {
+      max-width: 1000px;
+    }
+    .section {
+        padding: 3rem 1.5rem;
+    }
+    
+    /* Typography */
+    .content h2.title {
+        font-family: 'Google Sans', sans-serif;
+        font-size: 1.8rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+    }
+    .content h3 {
+        font-family: 'Google Sans', sans-serif;
+        font-weight: 600;
+        margin-top: 1.5rem;
+    }
+    p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
+        color: #444;
+    }
+
+    /* Abstract Box */
+    .abstract-box {
+        background-color: #f6f8fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        border-left: 5px solid #3273dc;
+    }
+
+    /* Custom Cards */
+    .method-card {
+        background: white;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+    .method-icon {
+        color: #3273dc;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Code Blocks */
+    .code-container {
+        position: relative;
+        background: #282c34;
+        border-radius: 6px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        overflow-x: auto;
+    }
+    code.language-prompt {
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.9rem;
+        color: #abb2bf;
+        background: transparent;
+        padding: 0;
+    }
+    .tag-think { color: #61afef; }
+    .tag-ans { color: #98c379; }
+    .tag-xml { color: #e06c75; }
+
+    /* Table */
+    .table-container {
+        margin: 2rem 0;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        overflow: hidden;
+    }
+    .table.is-hoverable tbody tr:hover {
+        background-color: #fbfbfb;
+    }
+    .table th {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+    .highlight-row {
+        background-color: #e6fffa !important;
+        font-weight: bold;
+    }
+    .improvement {
+        color: #00947e;
+        font-weight: bold;
+    }
+
+    /* Badges */
+    .custom-badge {
+        display: inline-block;
+        padding: 0.25em 0.6em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        margin-right: 0.5rem;
+    }
+    .bg-stem { background-color: #ff6b6b; color: white; }
+    .bg-ground { background-color: #ffe66d; color: #555; }
+    .bg-code { background-color: #4ecdc4; color: white; }
+
+    /* Roadmap Timeline */
+    .timeline {
+        position: relative;
+        max-width: 800px;
+        margin: 40px auto;
+        padding-left: 30px;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: #e1e4e8;
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 40px;
+    }
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    .timeline-marker {
+        position: absolute;
+        left: -36px;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #3273dc;
+        background: white;
+        z-index: 1;
+    }
+    .timeline-marker.is-current {
+        background: #3273dc;
+        box-shadow: 0 0 0 4px rgba(50, 115, 220, 0.2);
+    }
+    .timeline-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #888;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .timeline-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #363636;
+        margin-bottom: 10px;
+    }
+
+    footer {
+        background-color: #f5f5f5;
+        padding: 3rem 0;
+        margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://github.com/EvolvingLMMs-Lab/LLaVA-OneVision-1.5" target="_blank">
+      <!-- LLaVA Logo Placeholder -->
+      <span class="icon is-medium">
+        <i class="fas fa-fire" style="color: #ff6b6b;"></i>
+      </span>
+      <span>LLaVA-OneVision-1.5</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      
+      <h1 class="title is-1 publication-title">
+        LLaVA-OneVision-1.5-RL
+      </h1>
+      <h2 class="subtitle is-3 publication-subtitle">
+        Unlocking Multimodal Reasoning via Lightweight Reinforcement Learning
+      </h2>
+      
+      <div class="publication-authors">
+        <span class="author-block"><a href="https://didizhu-judy.github.io/" target="_blank">Didi Zhu</a>,</span>
+        <span class="author-block"><a href="https://scholar.google.com/citations?user=HDcnqg0AAAAJ&hl=en" target="_blank">Zhiyu Qu</a>,</span>
+        <span class="author-block"><a href="https://zerchen.github.io/" target="_blank">Zerui Chen</a>,</span>
+        <span class="author-block"><a href="https://scholar.google.com/citations?user=8wgDr90AAAAJ&hl=en" target="_blank">Polydefkis Gkagkos</a>,</span>
+        <span class="author-block"><a href="https://anxiangsir.github.io/" target="_blank">Xiang An</a></span>
+      </div>
+      
+      <div class="publication-authors" style="margin-top: 0.5rem;">
+        <span class="author-block">Project Leaders: <a href="https://www.geoch.top/" target="_blank">Changrui Chen</a>, <a href="https://jiankangdeng.github.io/" target="_blank">Jiankang Deng</a></span>
+      </div>
+      
+      <div class="is-size-6 publication-authors">
+        <span class="author-block" style="color: #666; margin-top: 5px;">LLaVA-OneVision Community Contributors</span>
+      </div>
+
+      <div class="publication-links">
+        <!-- PDF Link -->
+        <span class="link-block">
+          <a href="https://arxiv.org/abs/2509.23661" class="button is-dark is-rounded">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span>
+            <span>Paper</span>
+          </a>
+        </span>
+        <!-- Code Link -->
+        <span class="link-block">
+          <a href="https://github.com/mvp-ai-lab/LLaVA-OneVision-1.5-RL" class="button is-rounded is-white" style="border: 1px solid #333;">
+            <span class="icon"><i class="fab fa-github"></i></span>
+            <span>Code</span>
+          </a>
+        </span>
+        <!-- Model Link -->
+        <span class="link-block">
+          <a href="https://huggingface.co/mvp-lab/LLAVA-OV-1.5-8B-RL" class="button is-rounded is-warning is-light">
+            <span class="icon">🤗</span>
+            <span>Models (8B)</span>
+          </a>
+        </span>
+        <!-- Data Link -->
+        <span class="link-block">
+          <a href="https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data" class="button is-rounded is-success is-light">
+            <span class="icon"><i class="fas fa-database"></i></span>
+            <span>Data (67K)</span>
+          </a>
+        </span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Abstract Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <div class="abstract-box">
+          <!-- <h2 class="title is-4">Abstract</h2> -->
+          <div class="content has-text-justified">
+            <p>
+              We present the Reinforcement Learning (RL) post-training stage of <strong>LLaVA-OneVision-1.5</strong>. 
+              By leveraging a lightweight RL framework (GRPO) on top of the supervised instruct model, we effectively elicit latent reasoning capabilities. 
+              Using a curated dataset of only <strong>67K examples</strong> driven by discrepancy-based selection, 
+              our model learns to generate explicit "Chain-of-Thought" reasoning traces. 
+              This approach significantly boosts performance on complex STEM, Coding, and Reasoning tasks 
+              without compromising general visual understanding.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RL Training Data Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-12">
+        <h2 class="title is-3">RL Training Data</h2>
+        <div class="content has-text-justified">
+          <h4 class="title is-5">Discrepancy-Driven Data Selection</h4>
+          <p>
+            We curate the training data by measuring the divergence between <strong>Pass@N</strong> and <strong>Pass@1</strong> performance on diverse benchmarks. 
+            A significant gap indicates that the model possesses the <em>latent capability</em> to solve the task, yet its policy distribution fails to reliably assign high probability to the correct reasoning path. 
+            Under this lens, RL serves as an <strong>elicitation</strong> mechanism rather than knowledge injection. 
+            This selection paradigm ensures high training efficiency by targeting the model's effective learnable boundary.
+          </p>
+          
+          <h4 class="title is-5" style="margin-top: 1.5rem;">Reward-Based Sampling</h4>
+          <p>
+            To further filter the high-quality training instances, we employ a <strong>reward-based sampling</strong> strategy. 
+            We generate multiple candidate responses for each sample and retain only those where the average reward falls within a specified range. 
+            This filtering process effectively discards both trivial and unsolvable cases, biasing the corpus toward medium-difficulty instances.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- RL Data Image -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 2rem;">
+      <div class="column is-10">
+        <img src="rl_2stage_data.jpg" alt="RL Data Distribution" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <p class="is-size-7 has-text-grey" style="margin-top: 10px;">
+          Figure: Distribution of task categories in the RL training data. (a) Total RL corpus (67K instances). (b) Stage 1: Answer-only training. (c) Stage 2: Chain-of-thought training.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reward System Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-12">
+        <h2 class="title is-3">Reward System</h2>
+        <div class="content has-text-justified">
+          <p>
+             Our RL setup employs a rule-based reward paradigm, where rewards are derived directly from task outcomes rather than learned preference models. 
+             Since different answer types require distinct verification strategies, we design <strong>answer-type-specific scoring rules</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="columns is-centered">
+        <div class="column is-12">
+            <div class="method-card" style="height: auto;">
+                <div class="method-icon"><i class="fas fa-award"></i></div>
+                <h3 class="title is-5">Rule-Based Rewards</h3>
+                <p>Specific verification rules for different domains:</p>
+                
+                <table class="table is-striped is-hoverable is-fullwidth is-narrow" style="margin-top: 15px; font-size: 0.85rem;">
+                  <thead>
+                    <tr>
+                      <th style="width: 20%;">Category</th>
+                      <th style="width: 25%;">Source</th>
+                      <th>Reward Design Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="custom-badge bg-stem">STEM</span></td>
+                      <td>ViRL39K</td>
+                      <td>Choice accuracy & math expression equivalence</td>
+                    </tr>
+                    <tr>
+                      <td><span class="custom-badge bg-ground">Grounding</span></td>
+                      <td>Ref-L4, VigoRL-SA</td>
+                      <td>IoU between predicted/ref boxes; choice accuracy</td>
+                    </tr>
+                    <tr>
+                      <td>Spatial</td>
+                      <td>VigoRL-SAT</td>
+                      <td>Choice accuracy</td>
+                    </tr>
+                    <tr>
+                      <td>Counting</td>
+                      <td>PixmoCount</td>
+                      <td>Numeric token equivalence</td>
+                    </tr>
+                    <tr>
+                      <td><span class="custom-badge bg-code">Coding</span></td>
+                      <td>WebCode2M, UniSVG</td>
+                      <td>Token/tag overlap; SVG rendering similarity [0,1]</td>
+                    </tr>
+                    <tr>
+                      <td>OCR</td>
+                      <td>InfoVQA</td>
+                      <td>Text similarity</td>
+                    </tr>
+                    <tr>
+                      <td>Diagram</td>
+                      <td>AI2D</td>
+                      <td>Choice accuracy</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- Training Procedure Section -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-12">
+        <h2 class="title is-3">Training Procedure</h2>
+        <div class="content has-text-justified">
+          <p>
+            We employ <strong>Group Relative Policy Optimization (GRPO)</strong> within the <strong>AReaL</strong> asynchronous framework to maximize training efficiency. 
+            Our optimization objective omits the KL divergence penalty, relying instead on PPO-style clipping for stability.
+            We employ a <strong>two-stage curriculum</strong> to better exploit the structure of our RL corpus:
+          </p>
+          
+          <div class="columns is-multiline" style="margin-top: 1rem;">
+            <div class="column is-6">
+              <div class="box" style="height: 100%;">
+                <h4 class="title is-5">Stage 1: Answer-only RL</h4>
+                <p>
+                  Training exclusively on the normal split to reinforce output constraints.
+                </p>
+                <div class="code-container" style="margin-top: 10px; padding: 10px;">
+                  <code class="language-prompt" style="font-size: 0.8rem;">Put ONLY your final answer within &lt;answer&gt;&lt;/answer&gt;.</code>
+                </div>
+                <p class="is-size-7 has-text-grey">Stabilizes performance on concise tasks.</p>
+              </div>
+            </div>
+            
+            <div class="column is-6">
+              <div class="box" style="height: 100%;">
+                <h4 class="title is-5">Stage 2: Chain-of-Thought RL</h4>
+                <p>
+                  Encouraging explicit reasoning traces on long-reasoning data.
+                </p>
+                <div class="code-container" style="margin-top: 10px; padding: 10px;">
+                  <code class="language-prompt" style="font-size: 0.8rem;">Think and solve... within &lt;think&gt;&lt;/think&gt;...</code>
+                </div>
+                <p class="is-size-7 has-text-grey">Unlocks deeper reasoning capabilities.</p>
+              </div>
+            </div>
+          </div>
+          
+          <p style="margin-top: 1rem;">
+            To prevent forgetting short, perception-heavy skills, we interleave a small proportion of normal-set examples into Stage 2 mini-batches. 
+            This mixed-prompt curriculum allows LLaVA-OV-1.5-RL to simultaneously strengthen long-horizon reasoning and maintain strong performance on standard benchmarks.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Performance Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Performance of RL Post-training</h2>
+    <div class="content has-text-justified">
+      <p>
+        To validate the effectiveness of our lightweight RL post-training, we compare the RL-enhanced models against their supervised baselines and Qwen2.5-VL-7B.
+      </p>
+      
+      <h4 class="title is-5">1. Core Capability Enhancement</h4>
+      <p>
+        As presented in the table below, RL post-training yields consistent gains across major benchmarks. 
+        <strong>Multimodal Reasoning:</strong> Dramatic gains on WeMath (+7.9), MathVision (+8.8), and MMMU-Pro (+10.5) in "thinking" mode.
+        <strong>General VQA:</strong> Maintains or slightly improves performance on MMBench and DocVQA.
+      </p>
+    </div>
+
+    <!-- Main Results Table -->
+    <div class="table-container">
+        <style>
+          .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+          }
+          .results-table th, .results-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid #e1e4e8;
+          }
+          .results-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+          }
+          .results-table .header-group {
+            background-color: #eef1f5;
+          }
+          .results-table .sub-header {
+            font-size: 0.85rem;
+            color: #666;
+          }
+          .results-table .row-header {
+            text-align: left;
+            font-weight: 600;
+            background-color: #f9f9f9;
+          }
+          .results-table .row-avg {
+            background-color: #f0f0f0; /* gray!20 equivalent */
+            font-weight: bold;
+          }
+          .results-table .highlight-orange {
+            background-color: #fff3e0; /* orange!10 equivalent */
+          }
+          .results-table .val-up {
+            color: #cc7125; /* myorange equivalent */
+            font-size: 0.8em;
+            margin-left: 2px;
+          }
+          .results-table .best-val {
+            font-weight: bold;
+          }
+          .task-group-cell {
+            vertical-align: middle;
+            font-weight: bold;
+            background-color: #fff;
+            border-right: 2px solid #ddd;
+          }
+        </style>
+        
+        <table class="results-table">
+          <thead>
+            <!-- Top Header Row -->
+            <tr class="header-group">
+              <th rowspan="3" style="vertical-align: middle;">Task</th>
+              <th rowspan="3" style="vertical-align: middle;">Benchmark</th>
+              <th class="highlight-orange">LLaVA-OV-1.5</th>
+              <th colspan="2" class="highlight-orange">LLaVA-OV-1.5 RL</th>
+              <th>Qwen2.5-VL</th>
+              <th class="highlight-orange">LLaVA-OV-1.5</th>
+              <th>Qwen2.5-VL</th>
+              <th>LLaVA-OV</th>
+            </tr>
+            <!-- Size Header Row -->
+            <tr class="sub-header">
+              <th class="highlight-orange">8B</th>
+              <th colspan="2" class="highlight-orange">8B</th>
+              <th>7B</th>
+              <th class="highlight-orange">4B</th>
+              <th>3B</th>
+              <th>7B</th>
+            </tr>
+            <!-- Mode Header Row -->
+            <tr class="sub-header">
+              <th class="highlight-orange">-</th>
+              <th class="highlight-orange">thinking</th>
+              <th class="highlight-orange">fast</th>
+              <th>-</th>
+              <th class="highlight-orange">-</th>
+              <th>-</th>
+              <th>-</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <!-- General VQA Group -->
+            <tr>
+              <td rowspan="9" class="task-group-cell">General VQA</td>
+              <td class="row-header">MMStar</td>
+              <td>67.7</td>
+              <td>68.2<span class="val-up">↑0.5</span></td>
+              <td class="best-val">68.3<span class="val-up">↑0.6</span></td>
+              <td>62.5</td>
+              <td>64.9</td>
+              <td>55.9</td>
+              <td>61.7</td>
+            </tr>
+            <tr>
+              <td class="row-header">MMBench<sub>en</sub></td>
+              <td>84.1</td>
+              <td class="best-val">85.7<span class="val-up">↑1.6</span></td>
+              <td>85.7<span class="val-up">↑1.6</span></td>
+              <td>83.4</td>
+              <td>84.2</td>
+              <td>78.0</td>
+              <td>82.5</td>
+            </tr>
+            <tr>
+              <td class="row-header">MMBench<sub>cn</sub></td>
+              <td>81.0</td>
+              <td class="best-val">84.2<span class="val-up">↑3.2</span></td>
+              <td>81.5<span class="val-up">↑0.5</span></td>
+              <td>81.6</td>
+              <td>76.9</td>
+              <td>74.6</td>
+              <td>81.4</td>
+            </tr>
+            <tr>
+              <td class="row-header">MME-RealWorld<sub>en</sub></td>
+              <td>61.7</td>
+              <td class="best-val">63.4<span class="val-up">↑1.7</span></td>
+              <td>63.3<span class="val-up">↑1.6</span></td>
+              <td>57.3</td>
+              <td>61.6</td>
+              <td>51.6</td>
+              <td>57.4</td>
+            </tr>
+            <tr>
+              <td class="row-header">MME-RealWorld<sub>cn</sub></td>
+              <td>56.1</td>
+              <td>56.1<span class="val-up">↑0.0</span></td>
+              <td class="best-val">56.3<span class="val-up">↑0.2</span></td>
+              <td>51.5</td>
+              <td>49.6</td>
+              <td>45.4</td>
+              <td>54.0</td>
+            </tr>
+            <tr>
+              <td class="row-header">SeedBench<sub>image</sub></td>
+              <td>77.3</td>
+              <td>76.7</td>
+              <td class="best-val">77.6<span class="val-up">↑0.3</span></td>
+              <td class="best-val">77.5</td>
+              <td>76.6</td>
+              <td>74.8</td>
+              <td>75.4</td>
+            </tr>
+            <tr>
+              <td class="row-header">CV-Bench</td>
+              <td>80.7</td>
+              <td>82.9<span class="val-up">↑2.2</span></td>
+              <td>81.1<span class="val-up">↑0.4</span></td>
+              <td>80.0</td>
+              <td>77.2</td>
+              <td>71.5</td>
+              <td>77.9</td>
+            </tr>
+            <tr>
+              <td class="row-header">SEED-Bench-2-Plus</td>
+              <td>69.2</td>
+              <td>69.5<span class="val-up">↑0.3</span></td>
+              <td>69.2<span class="val-up">↑0.0</span></td>
+              <td class="best-val">70.9</td>
+              <td>68.9</td>
+              <td>68.6</td>
+              <td>64.9</td>
+            </tr>
+            <tr>
+              <td class="row-header">RealWorldQA</td>
+              <td>68.1</td>
+              <td>68.4<span class="val-up">↑0.3</span></td>
+              <td class="best-val">70.6<span class="val-up">↑2.5</span></td>
+              <td>68.5</td>
+              <td>67.8</td>
+              <td>60.0</td>
+              <td>66.3</td>
+            </tr>
+            <tr class="row-avg">
+              <td class="task-group-cell"></td> <!-- Empty for Avg row -->
+              <td class="row-header">Avg.</td>
+              <td>71.8</td>
+              <td class="best-val">72.8<span class="val-up">↑1.0</span></td>
+              <td>72.6<span class="val-up">↑0.8</span></td>
+              <td>72.2</td>
+              <td>72.1</td>
+              <td>66.4</td>
+              <td>71.1</td>
+            </tr>
+
+            <!-- Reasoning Group -->
+            <tr>
+              <td rowspan="6" class="task-group-cell">Reasoning</td>
+              <td class="row-header">MathVista<sub>mini</sub></td>
+              <td>69.6</td>
+              <td class="best-val">72.3<span class="val-up">↑2.7</span></td>
+              <td>71.8<span class="val-up">↑2.2</span></td>
+              <td>68.6</td>
+              <td>67.9</td>
+              <td>60.2</td>
+              <td>58.5</td>
+            </tr>
+            <tr>
+              <td class="row-header">WeMath</td>
+              <td>61.5</td>
+              <td class="best-val">69.4<span class="val-up">↑7.9</span></td>
+              <td>60.8</td>
+              <td>61.3</td>
+              <td>62.0</td>
+              <td>45.1</td>
+              <td>44.1</td>
+            </tr>
+            <tr>
+              <td class="row-header">MathVision</td>
+              <td>25.6</td>
+              <td class="best-val">34.4<span class="val-up">↑8.8</span></td>
+              <td>26.2<span class="val-up">↑0.6</span></td>
+              <td>22.4</td>
+              <td>24.2</td>
+              <td>21.3</td>
+              <td>18.5</td>
+            </tr>
+            <tr>
+              <td class="row-header">MMMU<sub>val</sub></td>
+              <td>55.4</td>
+              <td class="best-val">58.8<span class="val-up">↑3.4</span></td>
+              <td>54.9</td>
+              <td>51.3</td>
+              <td>52.7</td>
+              <td>46.4</td>
+              <td>48.8</td>
+            </tr>
+            <tr>
+              <td class="row-header">MMMU-Pro<sub>standard</sub></td>
+              <td>37.4</td>
+              <td class="best-val">39.9<span class="val-up">↑2.5</span></td>
+              <td>38.0<span class="val-up">↑0.6</span></td>
+              <td>36.3</td>
+              <td>35.3</td>
+              <td>31.1</td>
+              <td>28.0</td>
+            </tr>
+            <tr>
+              <td class="row-header">MMMU-Pro<sub>vision</sub></td>
+              <td>25.2</td>
+              <td class="best-val">35.7<span class="val-up">↑10.5</span></td>
+              <td>29.0<span class="val-up">↑3.8</span></td>
+              <td>32.8</td>
+              <td>25.4</td>
+              <td>21.3</td>
+              <td>14.3</td>
+            </tr>
+            <tr class="row-avg">
+               <td class="task-group-cell"></td>
+               <td class="row-header">Avg.</td>
+               <td>45.8</td>
+               <td class="best-val">51.8<span class="val-up">↑6.0</span></td>
+               <td>46.8<span class="val-up">↑1.0</span></td>
+               <td>45.5</td>
+               <td>44.6</td>
+               <td>37.6</td>
+               <td>35.4</td>
+            </tr>
+
+            <!-- OCR & Chart Group -->
+            <tr>
+              <td rowspan="7" class="task-group-cell">OCR & Chart</td>
+              <td class="row-header">ChartQA</td>
+              <td>86.5</td>
+              <td class="best-val">87.4<span class="val-up">↑0.9</span></td>
+              <td>87.0<span class="val-up">↑0.5</span></td>
+              <td>84.1</td>
+              <td>87.1</td>
+              <td>83.4</td>
+              <td>80.0</td>
+            </tr>
+            <tr>
+              <td class="row-header">CharXiv<sub>DQ</sub></td>
+              <td>70.9</td>
+              <td>68.4</td>
+              <td class="best-val">71.2<span class="val-up">↑0.3</span></td>
+              <td>69.8</td>
+              <td>63.8</td>
+              <td>58.2</td>
+              <td>47.6</td>
+            </tr>
+            <tr>
+              <td class="row-header">DocVQA</td>
+              <td>95.0</td>
+              <td>91.9</td>
+              <td class="best-val">95.0<span class="val-up">↑0.0</span></td>
+              <td>94.9</td>
+              <td>94.4</td>
+              <td>92.7</td>
+              <td>87.2</td>
+            </tr>
+            <tr>
+              <td class="row-header">OCRBench</td>
+              <td>82.9</td>
+              <td>81.7</td>
+              <td>82.3</td>
+              <td class="best-val">84.2</td>
+              <td>80.0</td>
+              <td>79.2</td>
+              <td>62.1</td>
+            </tr>
+            <tr>
+              <td class="row-header">AI2D<sub>w M</sub></td>
+              <td>84.2</td>
+              <td>83.7</td>
+              <td class="best-val">84.3<span class="val-up">↑0.1</span></td>
+              <td>82.6</td>
+              <td>83.6</td>
+              <td>78.6</td>
+              <td>81.4</td>
+            </tr>
+            <tr>
+              <td class="row-header">AI2D<sub>w/o M</sub></td>
+              <td class="best-val">94.1</td>
+              <td>93.7</td>
+              <td>93.9</td>
+              <td>93.4</td>
+              <td>93.3</td>
+              <td>90.7</td>
+              <td>90.8</td>
+            </tr>
+            <tr>
+              <td class="row-header">InfoVQA</td>
+              <td>78.4</td>
+              <td>76.6</td>
+              <td>78.7<span class="val-up">↑0.3</span></td>
+              <td class="best-val">81.7</td>
+              <td>76.1</td>
+              <td>75.6</td>
+              <td>68.8</td>
+            </tr>
+            <tr class="row-avg">
+               <td class="task-group-cell"></td>
+               <td class="row-header">Avg.</td>
+               <td>84.6</td>
+               <td>83.3</td>
+               <td class="best-val">84.6<span class="val-up">↑0.0</span></td>
+               <td>84.4</td>
+               <td>82.6</td>
+               <td>79.8</td>
+               <td>74.0</td>
+            </tr>
+
+             <!-- Others Group -->
+             <tr>
+               <td rowspan="4" class="task-group-cell">Others</td>
+               <td class="row-header">PixmoCount</td>
+               <td>62.2</td>
+               <td>65.7<span class="val-up">↑3.5</span></td>
+               <td class="best-val">71.1<span class="val-up">↑8.9</span></td>
+               <td class="best-val">63.3</td>
+               <td>52.2</td>
+               <td>50.9</td>
+               <td>49.3</td>
+             </tr>
+             <tr>
+               <td class="row-header">CountBench</td>
+               <td>88.2</td>
+               <td>86.8</td>
+               <td class="best-val">88.6<span class="val-up">↑0.4</span></td>
+               <td>86.4</td>
+               <td>79.8</td>
+               <td>72.5</td>
+               <td>78.4</td>
+             </tr>
+             <tr>
+               <td class="row-header">VL-RewardBench</td>
+               <td>47.7</td>
+               <td>44.0</td>
+               <td class="best-val">49.7<span class="val-up">↑2.0</span></td>
+               <td>49.7</td>
+               <td>48.2</td>
+               <td>42.1</td>
+               <td>44.5</td>
+             </tr>
+             <tr>
+               <td class="row-header">V*</td>
+               <td>78.0</td>
+               <td class="best-val">79.1<span class="val-up">↑1.1</span></td>
+               <td>78.0<span class="val-up">↑0.0</span></td>
+               <td>77.0</td>
+               <td>74.9</td>
+               <td>69.6</td>
+               <td>72.3</td>
+             </tr>
+             <tr class="row-avg">
+                <td class="task-group-cell"></td>
+                <td class="row-header">Avg.</td>
+                <td>69.0</td>
+                <td>66.0</td>
+                <td class="best-val">71.6<span class="val-up">↑2.6</span></td>
+                <td>69.1</td>
+                <td>63.8</td>
+                <td>58.8</td>
+                <td>61.1</td>
+             </tr>
+
+          </tbody>
+        </table>
+        <p class="is-size-7 has-text-grey has-text-centered" style="margin-top: 10px;">
+          Note: <strong>LLaVA-OV-1.5 RL (8B)</strong> results are highlighted. <span style="color: #cc7125;">↑</span> denotes improvement over the SFT baseline.
+        </p>
+    </div>
+
+    <!-- Extended Capability Analysis -->
+    <h4 class="title is-5" style="margin-top: 2rem;">2. Extended Capability Analysis</h4>
+    <p class="content has-text-justified">
+      Beyond the core benchmarks, we analyze specific vertical capabilities:
+      <br><strong>Spatial & Grounding:</strong> RL (Fast mode) significantly enhances fine-grained perception, consistently outperforming the baseline on SAT and Ref-L4.
+      <br><strong>Coding:</strong> "Thinking" mode achieves the highest scores on Design2Code and UniSVG, indicating that chain-of-thought reasoning aids structural code generation.
+    </p>
+
+    <!-- Performance Chart -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 2rem;">
+      <div class="column is-10">
+        <img src="rl_extend_performance.jpg" alt="Performance Comparison Chart" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <p class="is-size-7 has-text-grey" style="margin-top: 10px;">
+          Figure: Performance comparison of LLaVA-OV-1.5 and corresponding RL version on Spatial Reasoning & Grounding and Coding tasks.
+        </p>
+      </div>
+    </div>
+
+  
+
+
+
+<!-- Development Roadmap Section -->
+<section class="section" style="background-color: #fcfcfc;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Development Roadmap</h2>
+    <div class="content has-text-centered">
+      <p style="margin-bottom: 40px;">
+        LLaVA-OneVision-1.5-RL represents the latest chapter in our multimodal research, eliciting reasoning capabilities on top of the robust LLaVA-OV-1.5 foundation.
+      </p>
+    </div>
+
+    <div class="timeline">
+      
+      <!-- Past Item -->
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-date">Stage 1 & 1.5</div>
+          <h3 class="timeline-title">Pre-training & Mid-training</h3>
+          <p>
+            Large-scale visual-language alignment with efficient offline sample packing strategy on <strong>85M</strong> multimodal samples. 
+            Establishing a robust visual-language foundation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Past Item -->
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-date">Stage 2</div>
+          <h3 class="timeline-title">LLaVA-OneVision-1.5 (SFT)</h3>
+          <p>
+            Visual instruction tuning on <strong>22M</strong> carefully curated multimodal instruction-following samples across 7 categories. 
+            Achieving strong general visual understanding and task transfer capabilities.
+            <br>
+            <a href="https://github.com/EvolvingLMMs-Lab/LLaVA-OneVision-1.5" target="_blank" style="font-size: 0.9rem;">
+              <i class="fab fa-github"></i> View Base Model Repository
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Current Item -->
+      <div class="timeline-item">
+        <div class="timeline-marker is-current"></div>
+        <div class="timeline-content" style="border-left: 4px solid #3273dc;">
+          <div class="timeline-date" style="color: #3273dc;">Current Release</div>
+          <h3 class="timeline-title">LLaVA-OneVision-1.5-RL</h3>
+          <p>
+            <strong>Post-Training Reinforcement Learning (This Work)</strong><br>
+            Applying GRPO with rule-based rewards on 67K curated samples to elicit latent reasoning (Chain-of-Thought).
+            Significant gains in Math, Coding, and complex Reasoning tasks, while maintaining strong performance on General VQA and perception-heavy benchmarks.
+          </p>
+        </div>
+      </div>
+
+      <!-- Future Item
+      <div class="timeline-item">
+        <div class="timeline-marker" style="border-color: #aaa;"></div>
+        <div class="timeline-content" style="opacity: 0.8;">
+          <div class="timeline-date">Q4 2025 Planned</div>
+          <h3 class="timeline-title">Future Work</h3>
+          <ul style="margin-top: 10px; padding-left: 20px;">
+            <li><strong>Ultra-efficient MoE Training</strong>: Scaling up with Mixture-of-Experts.</li>
+            <li><strong>Full Video Input LLM</strong>: Enhanced long-context video understanding.</li>
+          </ul>
+        </div>
+      </div> -->
+
+    </div>
+  </div>
+</section>
+
+<!-- Citation Section -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Citation</h2>
+    <pre><code>@inproceedings{LLaVA-OneVision-1.5,
+  title={LLaVA-OneVision-1.5: Fully Open Framework for Democratized Multimodal Training},
+  author={An, Xiang and Xie, Yin and Yang, Kaicheng and Zhang, Wenkang and Zhao, Xiuwei and Cheng, Zheng and Wang, Yirui and Xu, Songcen and Chen, Changrui and Wu, Chunsheng and Tan, Huajie and Li, Chunyuan and Yang, Jing and Yu, Jie and Wang, Xiyao and Qin, Bin and Wang, Yumeng and Yan, Zizhen and Feng, Ziyong and Liu, Ziwei and Li, Bo and Deng, Jiankang},
+  booktitle={arXiv},  
+  year={2025}
+}
+
+@inproceedings{xie2025region,
+  title={Region-based Cluster Discrimination for Visual Representation Learning},
+  author={Xie, Yin and Yang, Kaicheng and An, Xiang and Wu, Kun and Zhao, Yongle and Deng, Weimo and Ran, Zimin and Wang, Yumeng and Feng, Ziyong and Miles, Roy and Elezi, Ismail and Deng, Jiankang},
+  booktitle={ICCV},
+  year={2025}
+}
+
+@article{lillava,
+  title={LLaVA-OneVision: Easy Visual Task Transfer},
+  author={Li, Bo and Zhang, Yuanhan and Guo, Dong and Zhang, Renrui and Li, Feng and Zhang, Hao and Zhang, Kaichen and Zhang, Peiyuan and Li, Yanwei and Liu, Ziwei and Li, Chunyuan},
+  journal={Transactions on Machine Learning Research},
+  year={2024}
+}</code></pre>
+  </div>
+</section>
+
+<!-- Acknowledgement Section -->
+<section class="section" style="background-color: #fcfcfc;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Acknowledgement</h2>
+    <div class="content" style="font-size: 1.05rem;">
+      <p>We acknowledge the support and thank the maintainers and contributors of the following open-source projects, whose work greatly inspired and supported our research:</p>
+      
+      <ul style="line-height: 2;">
+        <li><strong>AReaL</strong>: Lightning-Fast RL for LLM Reasoning and Agents. Made Simple & Flexible. — <a href="https://github.com/inclusionAI/AReaL" target="_blank" style="color: #209cee;">AReaL</a></li>
+        <li><strong>sglang</strong>: SGLang is a fast serving framework for large language models and vision language models. — <a href="https://github.com/sgl-project/sglang" target="_blank" style="color: #209cee;">sglang</a></li>
+        <li><strong>lmms-eval</strong>: A standardized evaluation framework for Large Multimodal Models — <a href="https://github.com/EvolvingLMMs-Lab/lmms-eval" target="_blank" style="color: #209cee;">lmms-eval</a></li>
+        <li><strong>LLaVA</strong>: Large Language-and-Vision Assistant — <a href="https://github.com/haotian-liu/LLaVA" target="_blank" style="color: #209cee;">LLaVA</a></li>
+        <li><strong>LLaVA-NeXT</strong>: Next-generation multi-modal assistant — <a href="https://github.com/LLaVA-VL/LLaVA-NeXT" target="_blank" style="color: #209cee;">LLaVA-NeXT</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- <footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        <a class="icon-link" href="#">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/mvp-ai-lab" class="external-link" disabled>
+          <i class="fab fa-github"></i>
+        </a>
+      </p>
+      <p>
+        This website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+      </p>
+    </div>
+  </div>
+</footer> -->
+
+</body>
+</html>
