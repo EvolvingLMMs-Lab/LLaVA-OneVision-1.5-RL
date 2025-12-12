@@ -1,3 +1,11 @@
+<p align="center" style="background-color: #fdffeaff; padding: 20px; border-radius: 10px;">
+  <strong style="font-size:18px; color:#FF6B6B;">🔗 This project has moved!</strong>
+  <br/><br/>
+  <a href="https://github.com/EvolvingLMMs-Lab/LLaVA-OneVision-1.5-RL" style="font-size:16px; text-decoration: none; color:#0969DA;">
+    Visit the new repository →
+  </a>
+</p>
+
 <p align="center">
   <picture>
     <img alt="LLaVA-OneVision-1.5-RL" src="./asset/logo.png" width="600" style="max-width: 100%;">
@@ -12,7 +20,7 @@
 
 <div align="center">
 
-🤗 **[Models](https://huggingface.co/mvp-lab/LLaVA-OV-1.5-8B-RL)** |
+🤗 **[Models](https://huggingface.co/mvp-lab/LLaVA-OneVision-1.5-8B-RL)** |
 🤗 **[Datasets](https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data)** |
 📄 **[Technical Report](https://arxiv.org/abs/2509.23661)** |
 📕 **[Xiaohongshu](http://xhslink.com/)**
@@ -31,8 +39,8 @@
     <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?logo=github&amp">
   </a>
   <!-- Model Downloads -->
-  <a href="https://huggingface.co/mvp-lab/LLaVA-OV-1.5-8B-RL">
-    <img alt="HF Model Downloads" src="https://img.shields.io/badge/dynamic/json?url=https://huggingface.co/api/models/mvp-lab/LLaVA-OV-1.5-8B-RL&amp;query=downloads&amp;label=OV-1.5-8B-RL%20Downloads&amp;color=yellow&amp;logo=huggingface&amp">
+  <a href="https://huggingface.co/mvp-lab/LLaVA-OneVision-1.5-8B-RL">
+    <img alt="HF Model Downloads" src="https://img.shields.io/badge/dynamic/json?url=https://huggingface.co/api/models/mvp-lab/LLaVA-OneVision-1.5-8B-RL&amp;query=downloads&amp;label=OneVision-1.5-8B-RL%20Downloads&amp;color=yellow&amp;logo=huggingface&amp">
   </a>
   <!-- Dataset Downloads -->
   <a href="https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data">
