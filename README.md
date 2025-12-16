@@ -12,7 +12,7 @@
 
 <div align="center">
 
-🌐 **[Models](https://mvp-ai-lab.github.io/LLaVA-OneVision-1.5-RL)** |
+🌐 **[Homepage](https://mvp-ai-lab.github.io/LLaVA-OneVision-1.5-RL)** |
 🤗 **[Models](https://huggingface.co/mvp-lab/LLaVA-OneVision-1.5-8B-RL)** |
 🤗 **[Datasets](https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data)** |
 📄 **[Technical Report](https://arxiv.org/abs/2509.23661)** |
