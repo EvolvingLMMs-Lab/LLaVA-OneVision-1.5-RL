@@ -123,7 +123,7 @@ accelerate launch --num_processes=8 --main_process_port 12399 -m lmms_eval \
 
 ```bash
 # Clone repository
-git clone https://github.com/mvp-ai-lab/LLaVA-OneVision-1.5-RL.git
+git clone https://github.com/EvolvingLMMs-Lab/LLaVA-OneVision-1.5-RL.git
 cd LLaVA-OneVision-1.5-RL
 
 # Install dependencies with uv (see https://docs.astral.sh/uv/getting-started/installation/)
