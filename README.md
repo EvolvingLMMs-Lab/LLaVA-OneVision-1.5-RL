@@ -16,7 +16,7 @@
 🤗 **[Models](https://huggingface.co/mvp-lab/LLaVA-OneVision-1.5-8B-RL)** |
 🤗 **[Datasets](https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data)** |
 📄 **[Technical Report](https://arxiv.org/abs/2509.23661)** |
-📕 **[Xiaohongshu](http://xhslink.com/)**
+📕 **[Xiaohongshu](https://www.xiaohongshu.com/explore/6941e4b6000000001e00b3c0?note_flow_source=wechat&xsec_token=CBgNT2G-l53rySniAQy4gh4IxAo18gIQOuRpRP0wnSIik=)**
 
 </div>
 
